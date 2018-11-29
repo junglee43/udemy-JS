@@ -76,7 +76,8 @@ var budgetController = (function() {
 
         },
 
-        // New method to return budget calculations so that we can pass that to the globa and UI controllers
+        // New method to return budget calculations so that we can pass that
+        // to the globa and UI controllers
         getBudget: function() {
             return {
                 budget: data.budget,
@@ -102,7 +103,11 @@ var UIcontroller = (function() {
         inputValue: '.add__value',
         inputBtn: '.add__btn',
         incomeContainer: '.income__list',
-        expensesContainer: '.expenses__list'
+        expensesContainer: '.expenses__list',
+        budgetLabel:'.budget__value',
+        incomeLabel: '.budget__income--value',
+        expensesLable: '.budget__expenses--value',
+        percentageLabel: '.budget__expenses--percentage'
     };
 
     return {
@@ -146,7 +151,8 @@ var UIcontroller = (function() {
             var fields, fieldsArray;
             fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
 
-            // A trick to coerce a list which is what is returned from queryselectorall into an array to be able to use array methods on the object
+            // A trick to coerce a list which is what is returned from queryselectorall
+            // into an array to be able to use array methods on the object
             fieldsArray = Array.prototype.slice.call(fields);
             fieldsArray.forEach(function(current, index, array) {
                 current.value = '';
@@ -154,6 +160,13 @@ var UIcontroller = (function() {
 
             // Sets the browser focus back to the Description field for easy entry
             fieldsArray[0].focus();
+        },
+
+        displayBudget: function(obj) {
+            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalIncome;
+            document.querySelector(DOMstrings.expensesLable).textContent = obj.totalExpense;
+            document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
         }
     };
 })();
