@@ -67,7 +67,13 @@ var budgetController = (function() {
             data.budget = data.totals.income - data.totals.expense;
 
             // Calculate the percentage of income that we spent
-            data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            // If statement to ensure that we're not dividing by zero
+            if(data.totals.income > 0) {
+                data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            } else {
+                data.percentage = -1;
+            };
+
         },
 
         // New method to return budget calculations so that we can pass that to the globa and UI controllers
