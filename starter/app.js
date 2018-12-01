@@ -189,7 +189,8 @@ var appController = (function(budgetCtrl, UICtrl) {
                 ctrlAddItem();
             }
         });
-
+        // Set event listener for container object that holds all the income
+        // and expence items on the HTML for event delegation using event bubbling
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
     };
 
@@ -231,7 +232,25 @@ var appController = (function(budgetCtrl, UICtrl) {
     };
 
     var ctrlDeleteItem = function(event) {
-        console.log(event.target);
+        var itemID, type, ID;
+
+        // Gets the clicked target items parent
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        // console.log(event.target);
+
+        if(itemID) {
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = splitID[1];
+
+            // 1. Delete the item from the data structure
+
+            // 2. Delete the item from the UI
+
+            // 3. Update and show new budget
+
+        }
+
     };
 
     return {
