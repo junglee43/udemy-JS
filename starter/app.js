@@ -154,6 +154,13 @@ var UIcontroller = (function() {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
+        deleteListItem: function(selectorID) {
+            // In JS, you cannot simply delete an item, you can only delete
+            // a child of an element
+            var element = document.getElementById(selectorID);
+            element.parentNode.removeChild(element);
+        },
+
         // Add a function to expose the DOMstring object to public
         // to enable the Global app controller to use it
         getDOMstrings: function() {
@@ -260,9 +267,10 @@ var appController = (function(budgetCtrl, UICtrl) {
             budgetCtrl.deleteItem(type, ID);
 
             // 2. Delete the item from the UI
+            UICtrl.deleteListItem(itemID);
 
             // 3. Update and show new budget
-
+            updateBudget();
         }
 
     };
