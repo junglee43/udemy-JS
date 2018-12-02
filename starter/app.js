@@ -1,8 +1,23 @@
+// Budget Controller
 var budgetController = (function() {
     var Expense = function(id, description, value) {
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = -1;
+    };
+
+    Expense.prototype.calcPercentages = function(totalIncome) {
+        if(totalIncome > 0) {
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1;
+        }
+
+    };
+
+    Expense.prototype.getPercentage = function() {
+        return this.percentage;
     };
 
     var Income = function(id, description, value) {
@@ -58,6 +73,19 @@ var budgetController = (function() {
             return newItem;
         },
 
+        deleteItem: function(type, id) {
+            var ids, index;
+            ids = data.allItems[type].map(function(current) {
+                return current.id;
+            });
+
+            index = ids.indexOf(id);
+
+            if(index !== -1) {
+                data.allItems[type].splice(index, 1);
+            }
+        },
+
         calculateBudget: function() {
             // Calculate total income and expenses
             calculateTotal('expense');
@@ -74,6 +102,19 @@ var budgetController = (function() {
                 data.percentage = -1;
             };
 
+        },
+
+        calculatePercentages: function() {
+            data.allItems.expense.forEach(function(current) {
+                current.calcPercentages(data.totals.income);
+            });
+        },
+
+        getPercentages: function() {
+            var allPerc = data.allItems.expense.map(function(current) {
+                return current.getPercentage();
+            });
+            return allPerc;
         },
 
         // New method to return budget calculations so that we can pass that
@@ -107,7 +148,8 @@ var UIcontroller = (function() {
         budgetLabel:'.budget__value',
         incomeLabel: '.budget__income--value',
         expensesLable: '.budget__expenses--value',
-        percentageLabel: '.budget__expenses--percentage'
+        percentageLabel: '.budget__expenses--percentage',
+        container: '.container'
     };
 
     return {
@@ -138,6 +180,13 @@ var UIcontroller = (function() {
 
             // Insert the HTML into the DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
+
+        deleteListItem: function(selectorID) {
+            // In JS, you cannot simply delete an item, you can only delete
+            // a child of an element
+            var element = document.getElementById(selectorID);
+            element.parentNode.removeChild(element);
         },
 
         // Add a function to expose the DOMstring object to public
@@ -188,6 +237,9 @@ var appController = (function(budgetCtrl, UICtrl) {
                 ctrlAddItem();
             }
         });
+        // Set event listener for container object that holds all the income
+        // and expence items on the HTML for event delegation using event bubbling
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
     };
 
     var updateBudget = function() {
@@ -200,6 +252,17 @@ var appController = (function(budgetCtrl, UICtrl) {
         // 3. Display the budget on the UI
         UICtrl.displayBudget(budget);
         console.log(budget);
+    };
+
+    var updatePercentages = function() {
+        // 1. Calculate percentages
+        budgetController.calculatePercentages();
+
+        // 2. Read percentages from the budget controller
+        var percentage = budgetController.getPercentages();
+
+        // 3. Update the UI with the new percentages
+        console.log(percentage);
     };
 
     var ctrlAddItem = function() {
@@ -224,6 +287,33 @@ var appController = (function(budgetCtrl, UICtrl) {
 
             // 5. Caluclate and update budget
             updateBudget();
+
+            updatePercentages();
+        }
+    };
+
+    var ctrlDeleteItem = function(event) {
+        var itemID, type, ID;
+
+        // Gets the clicked target items parent
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        // console.log(event.target);
+
+        if(itemID) {
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = parseInt(splitID[1]);
+
+            // 1. Delete the item from the data structure
+            budgetCtrl.deleteItem(type, ID);
+
+            // 2. Delete the item from the UI
+            UICtrl.deleteListItem(itemID);
+
+            // 3. Update and show new budget
+            updateBudget();
+
+            updatePercentages();
         }
     };
 
