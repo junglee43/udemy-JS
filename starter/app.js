@@ -13,7 +13,6 @@ var budgetController = (function() {
         } else {
             this.percentage = -1;
         }
-
     };
 
     Expense.prototype.getPercentage = function() {
@@ -101,7 +100,6 @@ var budgetController = (function() {
             } else {
                 data.percentage = -1;
             };
-
         },
 
         calculatePercentages: function() {
@@ -132,7 +130,6 @@ var budgetController = (function() {
             console.log(data);
         }
     };
-
 })();
 
 var UIcontroller = (function() {
