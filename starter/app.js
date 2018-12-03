@@ -150,6 +150,21 @@ var UIcontroller = (function() {
         expensesPercLabel: '.item__percentage'
     };
 
+    var formatNumber = function(num, type) {
+        var numSplit, int, dec;
+        num = Math.abs(num);
+        num = num.toFixed(2);
+        numSplit = num.split('.');
+
+        int = numSplit[0];
+        if(int.length > 3) {
+            int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
+        }
+
+        dec = numSplit[1];
+        return(type === 'expense' ? '-' : '+') + ' ' + int + '.' + dec;
+    };
+
     return {
         getInput: function() {
             return {
@@ -174,7 +189,7 @@ var UIcontroller = (function() {
             // Replace the placeholder text with actual data
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', obj.value);
+            newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
 
             // Insert the HTML into the DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
@@ -210,9 +225,11 @@ var UIcontroller = (function() {
         },
 
         displayBudget: function(obj) {
-            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-            document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalIncome;
-            document.querySelector(DOMstrings.expensesLable).textContent = obj.totalExpense;
+            var type;
+            obj.budget > 0 ? type = 'income' : type = 'expense';
+            document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.value, type);
+            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalIncome, 'income');
+            document.querySelector(DOMstrings.expensesLable).textContent = formatNumber(obj.totalExpense, 'expense');
 
             if(obj.percentage > 0) {
                 document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
@@ -236,7 +253,7 @@ var UIcontroller = (function() {
                     current.textContent = '---';
                 }
             });
-        }
+        },
     };
 })();
 
@@ -303,7 +320,6 @@ var appController = (function(budgetCtrl, UICtrl) {
 
             // 5. Caluclate and update budget
             updateBudget();
-
             updatePercentages();
         }
     };
@@ -328,7 +344,6 @@ var appController = (function(budgetCtrl, UICtrl) {
 
             // 3. Update and show new budget
             updateBudget();
-
             updatePercentages();
         }
     };
