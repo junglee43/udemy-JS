@@ -264,6 +264,10 @@ var UIcontroller = (function() {
             month = now.getMonth();
             year = now.getFullYear();
             document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' + year;
+        },
+
+        changedType: function() {
+
         }
     };
 })();
@@ -283,6 +287,7 @@ var appController = (function(budgetCtrl, UICtrl) {
         // Set event listener for container object that holds all the income
         // and expence items on the HTML for event delegation using event bubbling
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     };
 
     var updateBudget = function() {
