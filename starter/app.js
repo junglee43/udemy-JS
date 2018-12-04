@@ -166,6 +166,12 @@ var UIcontroller = (function() {
         return(type === 'expense' ? '-' : '+') + ' ' + int + '.' + dec;
     };
 
+    var nodeListForEach = function(list, callback) {
+        for(var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    };
+
     return {
         getInput: function() {
             return {
@@ -212,7 +218,9 @@ var UIcontroller = (function() {
         // Clears all fields after ENTER, looping over each element of the array
         clearFields: function() {
             var fields, fieldsArray;
-            fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+            fields = document.querySelectorAll(
+                DOMstrings.inputDescription + ', ' +
+                DOMstrings.inputValue);
 
             // A trick to coerce a list which is what is returned from queryselectorall
             // into an array to be able to use array methods on the object
@@ -228,12 +236,16 @@ var UIcontroller = (function() {
         displayBudget: function(obj) {
             var type;
             obj.budget > 0 ? type = 'income' : type = 'expense';
-            document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
-            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalIncome, 'income');
-            document.querySelector(DOMstrings.expensesLable).textContent = formatNumber(obj.totalExpense, 'expense');
+            document.querySelector(DOMstrings.budgetLabel).textContent =
+                formatNumber(obj.budget, type);
+            document.querySelector(DOMstrings.incomeLabel).textContent =
+                formatNumber(obj.totalIncome, 'income');
+            document.querySelector(DOMstrings.expensesLable).textContent =
+                formatNumber(obj.totalExpense, 'expense');
 
             if(obj.percentage > 0) {
-                document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
+                document.querySelector(DOMstrings.percentageLabel).textContent =
+                    obj.percentage + '%';
             } else {
                 document.querySelector(DOMstrings.percentageLabel).textContent = '---';
             }
@@ -241,11 +253,6 @@ var UIcontroller = (function() {
 
         displayPercentages: function(percentages) {
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
-            var nodeListForEach = function(list, callback) {
-                for(var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            };
 
             nodeListForEach(fields, function(current, index) {
                 if(percentages[index] > 0) {
@@ -267,7 +274,15 @@ var UIcontroller = (function() {
         },
 
         changedType: function() {
-
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue
+            );
+            nodeListForEach(fields, function(current) {
+                current.classList.toggle('red-focus');
+            });
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
         }
     };
 })();
